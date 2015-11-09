@@ -1,0 +1,56 @@
+---
+title: "Motor Trend Data Analysis"
+output: html_document
+---
+####By Sammie Bae
+
+In this analysis, looking at a data set of a collection of cars, relationship between a set of variables and miles per gallon (MPG) (outcome) will be explored to answer the following questions:
+
+1. “Is an automatic or manual transmission better for MPG”
+2. "Quantify the MPG difference between automatic and manual transmissions"
+
+
+###Data Set:
+```{r}
+mtcars
+```
+
+##“Is an automatic or manual transmission better for MPG”
+am in the data column represents automatic transmission. With cars of am 1 being manual and cars of am 0 being automatic
+
+
+```{r}
+autoCars  <- subset(mtcars,am==0) 
+manualCars<- subset(mtcars,am==1)
+```
+
+manualCars is non-automatic cars and manualCars is automatic cars
+
+
+```{r}
+boxplot(autoCars$mpg,manualCars$mpg, las = 1, ylab ="Miles Per Gallon", xlab ="Transmission Type (Figure 1)", names=c("Automatic","Manual")) 
+```
+
+
+
+```{r}
+summary(autoCars$mpg)
+summary(manualCars$mpg)
+```
+by performing basic analysis, it is observed that min, median, mean, and max of manual cars are all greater than that of automatic cars as shown in Figure 1. This strongly supports that manual cars are more fuel efficient than automatic ones
+
+####t.test verification
+
+```{r}
+t.test(mtcars$mpg~mtcars$am,var.equal=T)
+```
+To verify, t.test was conducted on the dataset .
+The confidence interval (95%) does not contain zero (-10.84837, -3.64151) and p-value is greater then 0.005. Therefore, it can concluded that the average consumption of manual cars is lower than that of automatic cars.
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(mtcars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
