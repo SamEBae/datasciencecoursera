@@ -9,13 +9,12 @@ In this analysis, looking at a data set of a collection of cars, relationship be
 1. “Is an automatic or manual transmission better for MPG”
 2. "Quantify the MPG difference between automatic and manual transmissions"
 
-
 ###Data Set:
 ```{r}
 mtcars
 ```
 
-##“Is an automatic or manual transmission better for MPG”
+###1. “Is an automatic or manual transmission better for MPG”
 am in the data column represents automatic transmission. With cars of am 1 being manual and cars of am 0 being automatic
 
 
@@ -47,10 +46,8 @@ t.test(mtcars$mpg~mtcars$am,var.equal=T)
 To verify, t.test was conducted on the dataset .
 The confidence interval (95%) does not contain zero (-10.84837, -3.64151) and p-value is greater then 0.005. Therefore, it can concluded that the average consumption of manual cars is lower than that of automatic cars.
 
-You can also embed plots, for example:
+###2. "Quantify the MPG difference between automatic and manual
 
 ```{r, echo=FALSE}
 plot(mtcars)
 ```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

@@ -1,0 +1,26 @@
+---
+title: "exploring residual"
+output: html_document
+---
+
+
+```{r}
+library('ggplot2')
+diamonds
+y <- diamonds$price
+x <- diamonds$caratn
+n <- length(y)
+fit <- lm(y ~x)
+e <-resid(fit)
+yhat <- predict(fit)
+max(abs(e-(y-yhat)))
+
+g = ggplot(data.frame(x =x, y= resid(lm(y~x))),
+              aes(x=x, y=y))
+g = g + geom_hline(yintercept =0, size=2)
+g = g + geom_point(size = 7, color= "black", alpha=0.4)
+g = g + geom_point(size = 5, color= "red", alpha=0.4)
+g = g + xlab("X") + ylab("Residual")
+g
+```
+
