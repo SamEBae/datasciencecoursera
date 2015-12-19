@@ -1,6 +1,6 @@
 ---
 title: "Motor Trend Data Analysis"
-output: html_document
+output: pdf_document
 ---
 ####By Sammie Bae
 ###Executive Summary:
@@ -91,7 +91,6 @@ Using this information, final model can be formed:
 ```{r}
 modelFinal <- lm(mpg~am + wt + qsec, data = mtcars)
 summary(modelFinal)
-
 ```
 
 ###Conclusion
