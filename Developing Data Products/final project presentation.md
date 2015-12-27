@@ -26,6 +26,55 @@ library(ggplot2)
 library(DT)
 library(devtools)
 crunchbaseCompanies<-read.csv("crunchbase-data/companies.csv", na.strings=c("NA",""),stringsAsFactors = FALSE)
+head(crunchbaseCompanies)
+```
+
+```
+                        permalink                 name
+1 /organization/bratpackstyle-llc #BratPackStyle, LLC.
+2             /organization/-fame                #fame
+3           /organization/hashoff             #HASHOFF
+4           /organization/waywire             #waywire
+5 /organization/tv-communications   &TV Communications
+6   /organization/rock-your-paper    'Rock' Your Paper
+                  homepage_url
+1 http://www.bratpackstyle.com
+2           http://livfame.com
+3       http://www.hashoff.com
+4       http://www.waywire.com
+5        http://enjoyandtv.com
+6 http://www.rockyourpaper.org
+                                                            category_list
+1 |Lifestyle|Content Discovery|Social Commerce|Retail|Fashion|E-Commerce|
+2                                                                 |Media|
+3                                   |Digital Media|Internet|Social Media|
+4                              |Entertainment|Politics|Social Media|News|
+5                                                                 |Games|
+6                                                  |Publishing|Education|
+           market funding_total_usd    status country_code state_code
+1 Social Commerce                 0 operating          USA         NY
+2           Media          10000000 operating          IND       <NA>
+3   Digital Media            955000 operating          USA         CO
+4            News           1750000  acquired          USA         NY
+5           Games           4000000 operating          USA         CA
+6      Publishing             40000 operating          EST       <NA>
+         region        city funding_rounds founded_at first_funding_at
+1 New York City    New York              1 2015-04-19       2015-06-01
+2        Mumbai      Mumbai              1       <NA>       2015-01-05
+3        Denver      Denver              2 2014-04-01       2014-12-08
+4 New York City    New York              1 2012-06-01       2012-06-30
+5   Los Angeles Los Angeles              2       <NA>       2010-06-04
+6       Tallinn     Tallinn              1 2012-10-26       2012-08-09
+  last_funding_at
+1      2015-06-01
+2      2015-01-05
+3      2015-08-11
+4      2012-06-30
+5      2010-09-23
+6      2012-08-09
+```
+
+```r
 setnames(crunchbaseCompanies, "category_list", "categories")
 setnames(crunchbaseCompanies, "funding_total_usd", "totalFunding")
 setnames(crunchbaseCompanies, "funding_rounds", "fundingRounds")
