@@ -24,9 +24,18 @@ shinyUI(fluidPage(
   titlePanel("Start-up Data Visualization"),
   
   fluidRow(
-    column(4,
+    column(3,
            wellPanel(
+             tags$small(paste0(
+               "Instruction: 
+               Choose different inputs (year founded, funding amount, market etc) and see different start-up information \n. Hover over data points to see more"
+             )),
+             tags$small(paste0(
+               "Note:
+               queries resulting in 0 companies will result in error"
+             )),
              tags$head(tags$script(src="app.js")),
+             tags$head(tags$style(src="style.css")),
              h4("Filter"),
              #Inputs:
              sliderInput("founded_at", "Year Founded", 1915, 2015, value = c(1915, 2015)),
@@ -34,16 +43,15 @@ shinyUI(fluidPage(
                          1, 19, 2, step = 1),
              textInput("funding_total_usd", "Total Funding ($ USD)"),
              selectInput("market", "Market/Industry",
-                         c(uniqueMarketCategories)
+                         c(uniqueMarketCategories), "Social Commerce"
              ),
              textInput("name", "Company name"),
-             selectInput("status", "Status", c("operating","acquired","closed","all")),
+             selectInput("status", "Status", c("operating","acquired","closed","all"),"all"),
              radioButtons("sort", "Sort",
                           c("None" = "none",
                             "Ascending" = "ascending",
                             "Descending" = "descending")
                           )
-             #textInput("companyInfo", "Info for Company")
            ),
            wellPanel(
              #selectInput("xvar", "X-axis variable", axis_vars, selected = "Meter"),
@@ -54,9 +62,9 @@ shinyUI(fluidPage(
              ))
            )
     ),
-    column(8,
+    column(9,
            wellPanel(
-             span("Number of start-ups:"),
+             #uiOutput("numberOfStartups"),
              plotlyOutput("mainGraph")
              #plotlyOutput("infoBox")
            ),
