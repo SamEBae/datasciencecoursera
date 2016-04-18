@@ -1,17 +1,22 @@
 var lastDate = new Date().getTime();
+var error = false;
+
 setInterval(function(){
 	var today = new Date().getTime();
 	if(today-lastDate<500){
 		return;
 	}
 	lastDate = today;
+	if(error){
+		return;
+	}
 	$(".hoverlayer").bind("DOMSubtreeModified", function() {
     	//console.log(this);
     	if($(".hovertext")){
     		if($(".hovertext").find("tspan")[1]){
     			var funding = $(".hovertext").find("tspan")[0].innerHTML;
     			var tempDiv = $(".hovertext").find("tspan")[1];
-    			console.log(tempDiv.innerHTML);
+    			
     			var innerHTML = tempDiv.innerHTML;
 
     			var pos1 = innerHTML.indexOf("Name: ");
@@ -34,4 +39,31 @@ setInterval(function(){
     		}
     	}
 	})
-},2000)
+	$(".js-range-slider").change(function(){
+		if(error){
+			$(".shiny-output-error").css("display","none");
+		}
+		setTimeout(function(){
+			console.log($(".shiny-output-error"));
+			$(".shiny-output-error").css("display","block");
+			if($(".shiny-output-error")[0]){
+				var css = '<style id="pseudo">.shiny-output-error.before-hidden:before {display: none;}</style>';
+        		document.head.insertAdjacentHTML( 'beforeEnd', css );
+
+				$(".shiny-output-error").text("No matching data returned").css(
+					{   "font-style": "italic",
+    					"font-weight": "800",
+    					"font-size": "2.25em",
+    					"color": "#ffc300"
+					}).addClass("before-hidden");
+				console.log($(".shiny-output-error")[0]);
+				$(".hoverlayer").unbind("DOMSubtreeModified");
+				$("#start-up-info").html("");
+				error = true;
+			}else{
+				error = false;
+			}
+		},400);
+	})
+},1500)
+
