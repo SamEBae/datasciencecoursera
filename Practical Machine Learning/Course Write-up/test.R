@@ -90,8 +90,6 @@ qplot(classe, data=dataTesting, main="Predictions RF") + facet_grid(predRight ~ 
 dataTesting$predRight <- predictionGBM==dataTesting$classe;
 qplot(classe, data=dataTesting, main="Predictions GBM") + facet_grid(predRight ~ .)
 
-#Errors
-Accuracy of both analysis is very high and error is less than 1%
 
 #Prediction
 pml_write_files = function(x){
