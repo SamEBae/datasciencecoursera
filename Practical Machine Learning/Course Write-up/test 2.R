@@ -36,6 +36,8 @@ training[undefinedToNA] <- NA
 ## Removing first 7 cols which only including log info seq No, user_name,time_stamp etc info
 training<-training[, -(1:7)]
 
+
+
 ## Removing cols only containing NA or ""
 thres <- nrow(clean.data) * 0.95  ## Setting threshoold as more than95% of NAs or ""
 nNaColumns <- !apply(training, 2, function(x) sum(is.na(x)) > thres  || sum(x=="") > thres)
