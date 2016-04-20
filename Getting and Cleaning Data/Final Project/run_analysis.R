@@ -64,4 +64,4 @@ library(reshape2)
   mergedData.mean <- cast(mergedData.new, subject + activity ~ variable, mean)
   
 #6. Write to output file
-  write.table(mergedData.mean, "output", row.names = FALSE, quote = FALSE)
+  write.table(mergedData.mean, "output.txt", row.names = FALSE, quote = FALSE)
