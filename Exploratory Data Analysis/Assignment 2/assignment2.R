@@ -15,20 +15,19 @@
   
 #read the data
   NEI <- readRDS("summarySCC_PM25.rds")
-  NEI
   SCC <- readRDS("Source_Classification_Code.rds")
-  SCC
   
 #Questions:
   #1. Have total emissions from PM2.5 decreased in the United States from 1999 to 2008? Using the base plotting system, 
   # make a plot showing the total PM2.5 emission from all sources for each of the years 1999, 2002, 2005, and 2008.
-  ##NEI$year
+  ##NEI$yearplot(NEI1999$Emissions, type="l", ylab="Emission", xlab="1999")
   png("plot1.png", width=480, height=480)
   par(mfrow = c(2, 2))
   NEI1999 <- NEI[NEI$year == '1999',]
   NEI2002 <- NEI[NEI$year == '2002',]
   NEI2005 <- NEI[NEI$year == '2005',]
   NEI2008 <- NEI[NEI$year == '2008',]
+  
   
   plot(NEI1999$Emissions, type="l", ylab="Emission", xlab="1999")
   plot(NEI2002$Emissions, type="l", ylab="Emission", xlab="2002")
@@ -87,16 +86,19 @@
   ggsave("plot4.png",plot4)
   
   #5. How have emissions from motor vehicle sources changed from 1999-2008 in Baltimore City?
-  
   SCCMotor <- SCC[grepl('car', SCC$Short.Name),]
-  BaltimoreCityMotor <- BaltimoreCity[BaltimoreCity$SCC == SCCMotor$SCC,]
-  plot5 < -ggplot(BaltimoreCityMotor, aes(x = year, y=Emissions)) +  geom_point(aes(colour = Emissions))
-  ggsave("plot5.png",plot5)
+  BaltimoreCityMotor <-   NEI[NEI$fips=="24510" & NEI$type=="ON-ROAD",  ]
+  
+  #plot5 < -ggplot(BaltimoreCityMotor, aes(x = year, y=Emissions)) +  geom_point(aes(colour = Emissions))
+  png("plot5.png", width=480, height=480)
+  plot(BaltimoreCityMotor$Emissions, type="l", ylab="Emission", xlab="")
+  dev.off()
   
   #6. Compare emissions from motor vehicle sources in Baltimore City with emissions from 
   #   motor vehicle sources in Los Angeles County, California (fips == "06037"). 
   #   Which city has seen greater changes over time in motor vehicle emissions?
   LACali<-NEI[NEI$fips == "06037",]
+  
   
   png("plot6.png", width=480, height=480)
   par(mfrow = c(1, 2))
