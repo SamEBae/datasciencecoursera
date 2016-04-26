@@ -1,7 +1,3 @@
-#install reshape2 package if not already installed
-#install.packages("reshape")
-#install.packages("reshape2")
-
 library(reshape)
 library(reshape2)
 #1. download the data from url if it doesn't exist in directory
@@ -38,6 +34,7 @@ library(reshape2)
   #trucate brackets
   filteredFeatures.names <- gsub('[-()]', '', filteredFeatures.names)
   filteredFeatures
+  names(filteredFeatures)
 #4. load training and testing data
   #training data
   trainX <- read.table("UCI HAR Dataset/train/X_train.txt")[filteredFeatures]
