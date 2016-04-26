@@ -99,10 +99,10 @@ run_analysis.R does the following
 ## Important Columns
 * `subject`: ID of the test subject
 * `activity`: type of activity performed when the corresponding measurements were taken
-	** `WALKING` (value `1`)
-	** `WALKING_UPSTAIRS` (value `2`)
-	** `WALKING_DOWNSTAIRS` (value `3`)
-	** `SITTING` (value `4`)
-	** `STANDING` (value `5`)
-	** `LAYING` (value `6`)
-* rest are various standard deviation, frequency, or mean data on movement of the smartphone
+	1. `WALKING` (value `1`)
+	2. `WALKING_UPSTAIRS` (value `2`)
+	3. `WALKING_DOWNSTAIRS` (value `3`)
+	4. `SITTING` (value `4`)
+	5. `STANDING` (value `5`)
+	6. `LAYING` (value `6`)
+* Rest of columns are various standard deviation, frequency, or mean data on movement of the smartphone
