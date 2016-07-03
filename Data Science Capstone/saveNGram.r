@@ -1,14 +1,15 @@
 library(tm)
 library(RWeka)
 library(SnowballC)
-
+setwd("C:/Users/Sam.E/Desktop/datasciencecoursera/Data Science Capstone")
 set.seed(7)
 
 textDataBlogs   <- readLines("dataset/en_US/en_US.blogs.txt", encoding = "UTF-8", skipNul=TRUE)
 textDataTwitter <- readLines("dataset/en_US/en_US.twitter.txt", encoding = "UTF-8", skipNul=TRUE)
 textDataNews    <- readLines("dataset/en_US/en_US.news.txt", encoding = "UTF-8", skipNul=TRUE)
 
-sampleSize <- min(c(length(textDataTwitter)*0.25,length(textDataNews)*0.25,length(textDataBlogs)*0.25))
+#sample half
+sampleSize <- min(c(length(textDataTwitter),length(textDataNews),length(textDataBlogs)))
 
 sampleTwitter <- textDataTwitter[sample(1:length(textDataTwitter),sampleSize)]
 sampleNews <- textDataNews[sample(1:length(textDataNews),sampleSize)]
@@ -51,6 +52,14 @@ twowordtm <- DocumentTermMatrix(docs, control = list(tokenize = twowordTokenizer
 threewordTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 3, max = 3))
 threewordtm <- DocumentTermMatrix(docs, control = list(tokenize = threewordTokenizer))
 
+# 4 words frequencies
+fourwordTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 4, max = 4))
+fourwordtm <- DocumentTermMatrix(docs, control = list(tokenize = fourwordTokenizer))
+
+# 5 words frequencies
+fivewordTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 5, max = 5))
+fivewordtm <- DocumentTermMatrix(docs, control = list(tokenize = fivewordTokenizer))
+
 onewordtmfreq <- sort(colSums(as.matrix(onewordtm)), decreasing=TRUE)
 onewordfreq <- data.frame(word=names(onewordtmfreq), freq=onewordtmfreq)
 
@@ -60,19 +69,23 @@ twowordfreq <- data.frame(word=names(twowordtmfreq), freq=twowordtmfreq)
 threewordtmfreq <- sort(colSums(as.matrix(threewordtm)), decreasing=TRUE)
 threewordfreq <- data.frame(word=names(threewordtmfreq), freq=threewordtmfreq)
 
+fourwordtmfreq <- sort(colSums(as.matrix(fourwordtm)), decreasing=TRUE)
+fourwordfreq <- data.frame(word=names(fourwordtmfreq), freq=fourwordtmfreq)
+
+fivewordtmfreq <- sort(colSums(as.matrix(fivewordtm)), decreasing=TRUE)
+fivewordfreq <- data.frame(word=names(fivewordtmfreq), freq=fivewordtmfreq)
+
 saveRDS(onewordtm, "onewordtm.rds")
 saveRDS(twowordtm, "twowordtm.rds")
 saveRDS(threewordtm, "threewordtm.rds")
+saveRDS(fourwordtm, "fourwordtm.rds")
+saveRDS(fivewordtm, "fivewordtm.rds")
 
 saveRDS(onewordfreq, "onewordfreq.rds")
 saveRDS(twowordfreq, "twowordfreq.rds")
 saveRDS(threewordfreq, "threewordfreq.rds")
+saveRDS(fourwordfreq, "fourwordfreq.rds")
+saveRDS(fivewordfreq, "fivewordfreq.rds")
 
-
-# cleaner n gram
-head(twowordfreq$word,4)
-twowordsample <- as.character(head(twowordfreq$word,4))
-twowords <- unlist(strsplit(twowordsample, " "))
-twowords
-
-
+fivewordfreq <- readRDS("fivewordfreq.rds")
+head(fivewordfreq)
