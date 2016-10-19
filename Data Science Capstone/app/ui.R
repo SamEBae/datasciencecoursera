@@ -22,8 +22,7 @@ shinyUI(fluidPage(
     ),
     column(9,
            wellPanel(
-            #h2(textOutput("nextword")),
-            #h1(paste("Result:")),
+            p(paste("Predicted next word:")),
             h2(textOutput("nextword2"))
            )
     )

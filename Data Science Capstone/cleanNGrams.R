@@ -19,7 +19,8 @@ formatNGram <- function(n, freqRDS) {
 	colnames(freqRDSFormatted) <- columnNames
 	fileTitle <- paste("words",toString(n),"Formatted.rds", sep = '');
 	saveRDS(freqRDSFormatted, fileTitle)
-}  
+}
+
 twowordfreq  <- readRDS("twowordfreq.rds")
 threewordfreq<- readRDS("threewordfreq.rds")
 fourwordfreq <- readRDS("fourwordfreq.rds")
@@ -29,6 +30,3 @@ formatNGram(2,twowordfreq)
 formatNGram(3,threewordfreq)
 formatNGram(4,fourwordfreq)
 formatNGram(5,fivewordfreq)
-
-testfive <- readRDS("words5Formatted.rds")
-head(testfive)

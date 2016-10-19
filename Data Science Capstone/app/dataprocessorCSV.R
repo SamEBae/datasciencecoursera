@@ -1,19 +1,23 @@
 library(wordcloud)
 # init
-  setwd("C:/Users/Sam.E/Desktop/datasciencecoursera/Data Science Capstone/app/data")
+ #setwd("C:/Users/Sam.E/Desktop/datasciencecoursera/Data Science Capstone/app/data")
   
 # Load in ngrams
   if (!exists("n5")) {
-    n5 <- read.csv("n5.csv", stringsAsFactors=FALSE)
+    n5file <- file.path("data", "n5.csv") 
+    n5 <- read.csv(n5file, header=T)
   }
   if (!exists("n4")) {
-    n4 <- read.csv("n4.csv", stringsAsFactors=FALSE)
+    n4file <- file.path("data", "n4.csv") 
+    n4 <- read.csv(n4file, header=T)
   }
   if (!exists("n3")) {
-    n3 <- read.csv("n3.csv", stringsAsFactors=FALSE)
+    n3file <- file.path("data", "n3.csv") 
+    n3 <- read.csv(n3file, header=T)
   }
   if (!exists("n2")) {
-    n2 <- read.csv("n2.csv", stringsAsFactors=FALSE)
+    n2file <- file.path("data", "n2.csv") 
+    n2 <- read.csv(n2file, header=T)
   }
   
 # helper functions
@@ -102,9 +106,6 @@ library(wordcloud)
     merge4n3 <- merge(merge5n4, words3Formatted.match, by="nextword", all=TRUE)
     merge3n2 <- merge(merge4n3, words2Formatted.match, by="nextword", all=TRUE)
     df <- subset(merge3n2, !is.na(nextword))  # rm any zero-match results
-    #print(df$nextword)
-    #print(df$score)
-    #wordcloud(df$nextword, max.words=100, scale=c(2, .1))
     
     if (nrow(df) > 0) {
       df <- df[order(-df$n5.MLE, -df$n4.MLE, -df$n3.MLE, -df$n2.MLE), ]
@@ -117,7 +118,6 @@ library(wordcloud)
     return(df)  # dataframe
   }
 
-  
 
   StupidBackoff <- function(phrase, alpha=0.4, getNrows=20, showNresults=1,
                             removeProfanity=TRUE) {
@@ -142,10 +142,6 @@ library(wordcloud)
     } else {
       nextword <- df$nextword[1:showNresults]
     }
-    #if (removeProfanity) {
-    #  if (nextword %in% profaneWords) {
-    #    nextword <- "#@?!"
-    #  }
-    #}
+    
     return(nextword)
   }
