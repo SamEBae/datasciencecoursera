@@ -1,0 +1,157 @@
+---
+title: "Fitness Data Prediction"
+author: "Sammie Bae"
+date: "December 22, 2015"
+output: html_document
+---
+
+####By Sammie Bae
+#Background:
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement - a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, data from belt accelerometers to predict what excercise 6 participants are doing between forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. 
+
+#Goal
+The goal of the project is to predict the manner in which they did the exercise. This is the "classe" variable in the training set. These exercise vary accordingly:  "exactly according to the specification (Class A), throwing the elbows to the front (Class B), lifting the dumbbell only halfway (Class C), lowering the dumbbell only halfway (Class D) and throwing the hips to the front (Class E). Class A corresponds to the specified execution of the exercise, while the other 4 classes correspond to common mistakes." The model should predict accurately on 20 sample different test cases.
+
+#Setup
+Loading the data and setup:
+```{r}
+library(knitr)
+library(caret)
+library(randomForest)
+library(rpart)
+library(rpart.plot)
+library(rattle)
+
+#set the working directory
+setwd("C:/Users/Sam.E/Desktop/datasciencecoursera/Practical Machine Learning/Course Write-up")
+#Data Source:
+if(!file.exists("pml-training.csv")){
+  download.file("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv", destfile = "pml-training.csv")
+}
+if(!file.exists("pml-testing.csv")){
+  download.file("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv", destfile = "pml-testing.csv")
+}
+training <-read.csv("pml-training.csv", na.strings=c("NA",""),stringsAsFactors = FALSE)
+testing <-read.csv("pml-testing.csv", na.strings=c("NA",""),stringsAsFactors = FALSE)
+dim(training);dim(testing)
+```
+
+#Data Preprocessing & Clean-up
+```{r}
+#undefined data to N/A
+undefinedToNA <- sapply(training, function(x) x=="#DIV/0!")
+training[undefinedToNA] <- NA
+#First seven columns are irrelevant: user_name	raw_timestamp_part_1	raw_timestamp_part_2	cvtd_timestamp	new_window	num_window	roll_belt	pitch_belt
+training<-training[, -(1:7)]
+```  
+
+There are lot of columns with N/A values that will interfere with our machine learning model.
+Any N/A columns should be removed
+```{r}
+#remove N/A value columns
+training<- training[, unlist(lapply(training, function(x) !any(is.na(x))))]
+testing<- testing[, unlist(lapply(testing, function(x) !any(is.na(x))))]
+```
+
+Although this [article](http://www.r-bloggers.com/near-zero-variance-predictors-should-we-remove-them/) warns not to throw data away, 
+to make the data analysis easier, near zero variance values will be discarded as they has little significance on building our prediction model
+```{r}
+nearZeroVarianceColumns<- nearZeroVar(training, saveMetrics = TRUE)
+training<- training[, nearZeroVarianceColumns$nzv==FALSE]
+training$classe = factor(training$classe)
+```
+
+#Data Partitioning
+For this partitioning, training and testing data set are 60% and 40% respectively
+```{r}
+inTrain<-createDataPartition(y=training$classe, p=0.6, list=FALSE)
+dataTraining<-training[inTrain, ]
+dataTesting <-training[-inTrain, ]
+```
+
+#Model Building
+##Method 1: Random Forrests
+###Training the model with Random Forrests
+Random forest trees are one of the best prediction model in machine learning. This dataset will first be modelled with trees:
+```{r}
+trainingModelRF <- train(classe ~ .,trControl=trainControl(method = "cv", number = 5),data=dataTraining, method="rf")
+print(trainingModelRF)
+```
+###Prediction model with Random Forrests
+```{r}
+predictionRF<-predict(trainingModelRF, dataTesting)
+confusionMatrix(predictionRF, dataTesting$classe)
+```
+###Plotting Random Forrests Model
+```{r}
+qplot(predictionRF,classe,data=dataTesting)
+```
+
+###Accuracy of Random Forrests
+```{r}
+accuracy <- postResample(predictionRF, dataTesting$classe)
+model_accuracy <- accuracy[[1]]*100
+model_accuracy
+```
+
+#Method 2: Generalized Boosted Regression (GBM)
+###Training the model with GBM
+```{r}
+modelGBM<-train(classe ~ .,method="gbm",data=dataTraining,verbose=FALSE)
+print(modelGBM)
+```
+###Prediction model with Generalized Boosted Regression
+```{r}
+predictionGBM<-predict(modelGBM, dataTesting)
+confusionMatrix(predictionGBM, dataTesting$classe)
+```
+###Plotting Generalized Boosted Regression
+```{r}
+qplot(predictionGBM,classe,data=dataTesting)
+```
+
+###Accuracy of Generalized Boosted Regression
+```{r}
+accuracy <- postResample(predictionRF, dataTesting$classe)
+model_accuracy <- accuracy[[1]]*100
+model_accuracy
+```
+
+
+#Cross Validation
+```{r}
+dataTesting$predRight <- predictionRF==dataTesting$classe;
+qplot(classe, data=dataTesting, main="Predictions RF") + facet_grid(predRight ~ .)
+
+dataTesting$predRight <- predictionGBM==dataTesting$classe;
+qplot(classe, data=dataTesting, main="Predictions GBM") + facet_grid(predRight ~ .)
+```
+Both plot above show that prediction model was very accurate and did not overfit the data
+
+#Errors
+Accuracy of both analysis is very high and error is less than 1%.
+However, it can be observed via qplot that Boosted Regular Regression had more inaccurate predictions than Random Forrests
+
+
+#Prediction
+Therefore, due to the higher accuracy and since Random Forrests are harder to overfit the data than Generalized Boosted Regression, Random Forrests prediction model will be applied to the data set
+Final prediction model will be applied to 20 data sets
+```{r}
+predictionFinalSubmission<-predict(trainingModelRF, testing)
+print(predictionFinalSubmission)
+
+pml_write_files = function(x){
+  n = length(x)
+  for(i in 1:n){
+    filename = paste0("problem_id_",i,".txt")
+    write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+  }
+}
+pml_write_files(predictionFinalSubmission)
+```
+
+#Summary
+In this analysis, two prediction models were used to predict exercises of users using their movement data.
+Random Forrests, while being more computationally demanding, is less likely to has overfitting and therefore was chosen for the final prediction.
+
+20 results are predicted accurately against the data set, therefore the model was trained well enough and predicted the data set properly.

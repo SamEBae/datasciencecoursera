@@ -1,0 +1,105 @@
+---
+title: "Reproducible Research Assignment 2: Fatalities and Economic Damage from Environment"
+author: "Sammie Bae"
+date: "April 26, 2016"
+output: html_document
+---
+#Project: 
+## Investigating Fatalities and Economic Damage from Environment using data from U.S. National Oceanic and Atmospheric Administration's (NOAA) storm database (1950 - 2011)
+
+
+#Synopsis:
+###Storms and other severe weather events can cause both public health and economic problems for communities and municipalities. Many severe events can result in fatalities, injuries, and property damage, and preventing such outcomes to the extent possible is a key concern.
+
+###This project involves exploring the U.S. National Oceanic and Atmospheric Administration's (NOAA) storm database. This analysis will explore which environmental events caused the most death and economic damage
+
+###It can be concluded for both number of deaths and highest economical damage that tornado is the most harmful event
+
+#Data Processing:
+Download the data from url if it doesn't exist in directory
+```{r}
+setwd("C:\\Users\\Sam.E\\Desktop\\datasciencecoursera\\Reproducible Research\\Assignment 2")
+  getwd()
+  fileName <- "repdata-data-StormData.csv.bz2"
+```
+
+Download
+```{r}
+  if (!file.exists(fileName)){
+    downloadURL <-"https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2"
+    f <- file.path(getwd(), "repdata-data-StormData.csv.bz2")
+    download.file(downloadURL, f)
+  }
+```
+
+Unzip it
+```{r}
+  if (!file.exists("repdata-data-StormData.csv")) { 
+    unzip(fileName) 
+  }
+```
+
+read the CSV data
+```{r}
+  repData <- read.csv("repdata-data-StormData.csv")
+```
+
+#Data Analysis
+1. Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?
+```{r}
+  library(ggplot2)
+
+  repData$EVTYPE = toupper(repData$EVTYPE)
+  dim(repData)
+  
+  #aggregate by EVTYPE and FATALITIES
+  aggFatalrepData <- aggregate(FATALITIES ~ EVTYPE, data = repData, sum)
+  #fatal greater than 0
+  fatalData <- aggFatalrepData[aggFatalrepData$FATALITIES > 0, ]
+  #order descending
+  fatalOrder <- fatalData[order(fatalData$FATALITIES, decreasing = TRUE), ]
+  head(fatalOrder)
+  
+  #highest fatalities
+  fatalOrder[1,]
+  
+
+```
+
+###Answer: Clearly from the descendingly ordering the data by fatalities and graphing it, Tornado caused most number of deaths
+
+
+2. Across the United States, which types of events have the greatest economic consequences?
+```{r}
+  library(ggplot2)
+  names(repData)
+  #economic damage PROPDMG
+  
+  #aggregate by EVTYPE and PROPDMG
+  aggDMGrepData <- aggregate(PROPDMG ~ EVTYPE, data = repData, sum)
+  #damage greater than 0
+  DMGrepData <- aggDMGrepData[aggDMGrepData$PROPDMG > 0,]
+  #order descending
+  DMGrepOrder<- DMGrepData[order(DMGrepData$PROPDMG, decreasing = TRUE), ]
+  head(DMGrepOrder)
+  
+  #highest damage
+  DMGrepOrder[1,]
+```
+
+###Answer: Clearly from the descendingly ordering the data by economic damage and graphing it, Tornado caused most economic damage
+
+#Result
+```{r}
+  topFatal <- fatalOrder[1:5,]
+  barplot(topFatal[,2], col = rainbow(10), legend.text = topFatal[,1], 
+          ylab = "Deaths", main = "5 events that caused most deaths")
+  
+  topDMG <- DMGrepOrder[1:5,]
+  barplot(topDMG[,2], col = rainbow(10), legend.text = topDMG[,1], 
+          ylab = "$Property damage (USD)", main = "5 events that caused most economic damage")
+```
+
+#Conclusion
+##As seen from both graphs, tornado casused the most deaths and economic damage
+

@@ -1,0 +1,109 @@
+---
+title: "Reproducible Research Assignment 1"
+author: "Sammie Bae"
+date: "April 23, 2016"
+output: html_document
+---
+
+1. Load the data & Process/transform the data
+
+Download the data from url if it doesn't exist in directory
+```{r}
+  setwd("C:\\Users\\Sam.E\\Desktop\\datasciencecoursera\\Reproducible Research\\Assignment 1")
+  getwd()
+  fileName <- "getdata_dataset.zip"
+```
+
+Download
+```{r}
+  if (!file.exists(fileName)){
+    url <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+    f <- file.path(getwd(), "getdata_dataset.zip")
+    download.file(url, f)
+  }
+```
+
+Unzip it
+```{r}
+  if (!file.exists("repdata-data-activity")) { 
+    unzip(fileName) 
+  }
+```
+
+read the CSV data
+```{r}
+  repData <- read.csv("activity.csv")
+```
+
+2. What is mean total number of steps taken per day?
+```{r}
+  library(ggplot2)
+  step.mean     <- tapply(repData$steps, repData$date, FUN=sum, na.rm=TRUE)
+  aggregatedDay <- aggregate(steps ~ date, repData, as.vector)
+  
+  qplot(step.mean, binwidth=1000, xlab="Steps by day")
+  
+  mean(step.mean, na.rm=TRUE)
+  median(step.mean, na.rm=TRUE)
+```
+Answer: the mean is approximately  9354 steps per day and the median is 10395 steps per day
+
+
+3. What is the average daily activity pattern?
+```{r}
+  library(ggplot2)
+  averageInterval<-aggregate(x=list(steps=repData$steps), by=list(interval=repData$interval), FUN=mean, na.rm=TRUE)
+  aesOption <- aes(x=interval, y=steps)
+  ggplot(data=averageInterval, aesOption) + geom_line()+xlab("5-minute Intervals")+ylab("Average Steps Taken")
+```
+
+4. Calculate Imputing missing values
+```{r}
+  missing <- is.na(repData$steps)
+  table(missing)
+  
+```
+Answer: there are 2304 missing values that need to be filled:
+```{r}
+  fillValues <- function(steps, interval) {
+    filled <- NA
+    if (!is.na(steps))
+      filled <- c(steps)
+    else
+      filled <- (averageInterval[averageInterval$interval==interval, "steps"])
+    return(filled)
+  }
+  filledData <- repData
+  filledData$steps <- mapply(fillValues, filledData$steps, filledData$interval)
+  
+  total.steps <- tapply(filledData$steps, filledData$date, FUN=sum)
+  qplot(total.steps, binwidth=1000, xlab="total number of steps taken each day")
+  mean(total.steps)
+  median(total.steps)
+```
+  
+5. Are there differences in activity patterns between weekdays and weekends?
+```{r}
+  weekday.or.weekend <- function(date) {
+    day <- weekdays(date)
+    weekends <-c("Saturday", "Sunday")
+    weekdays <-c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday")
+    if (day %in% weekends)
+      return("weekend")
+    else if (day %in% weekdays)
+      return("weekday")
+    else
+      stop("invalid date")
+  }
+  filledData$date <- as.Date(filledData$date)
+  filledData$day <- sapply(filledData$date, FUN=weekday.or.weekend)
+  
+  par(mfrow = c(2, 2))
+   
+  averages <- aggregate(steps ~ interval + day, data=filledData, mean)
+  ggplot(data=averageInterval, aesOption) + geom_line()+xlab("5-minute Intervals")+ylab("Average Steps Taken")
+  ggplot(averages, aes(interval, steps)) + geom_line() + xlab("5-minute interval") + ylab("Number of steps")
+  
+```
+
+Answer: yes, there is generally more activity on weekends
