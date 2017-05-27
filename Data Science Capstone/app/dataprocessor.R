@@ -125,11 +125,6 @@
     words3Formatted.match <- selectCheckNGram(phrase,words3Formatted,nrows,3)
     words2Formatted.match <- selectCheckNGram(phrase,words2Formatted,nrows,2)
     
-    print(head(words5Formatted.match))
-    print(head(words4Formatted.match))
-    print(head(words3Formatted.match))
-    print(head(words2Formatted.match))
-    
     # merge dfs, by outer join (fills zeroes with NAs)
     merge5n4 <- merge(words5Formatted.match, words4Formatted.match, by="nextword", all=TRUE)
     merge4n3 <- merge(merge5n4, words3Formatted.match, by="nextword", all=TRUE)
@@ -152,8 +147,8 @@
                             removeProfanity=TRUE) {
     
     phrase <- strsplit(phrase, " ")
-    print(phrase)
     nextword <- ""
+    
     if (phrase == "") {
       return("the")
     }
@@ -162,6 +157,7 @@
     if (nrow(df) == 0) {
       return("and")
     }
+
     df <- df[df$nextword != "unk", ]  # remove unk
     if (showNresults > nrow(df)) {
       showNresults <- nrow(df)
@@ -170,17 +166,11 @@
       # check if top overall score is shared by multiple candidates
       topwords <- df[df$score == max(df$score), ]$nextword
       # if multiple candidates, randomly select one
-      print(topwords)
       nextword <- sample(topwords, 1)
     } else {
       nextword <- df$nextword[1:showNresults]
     }
-    #if (removeProfanity) {
-    #  if (nextword %in% profanities) {
-    #    nextword <- "#@?!"
-    #  }
-    #}
-    
+
     return(nextword)
   }
   StupidBackoff(c("hello","how"))

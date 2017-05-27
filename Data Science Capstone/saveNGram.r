@@ -10,7 +10,7 @@ textDataBlogs   <- readLines("dataset/en_US/en_US.blogs.txt", encoding = "UTF-8"
 textDataTwitter <- readLines("dataset/en_US/en_US.twitter.txt", encoding = "UTF-8", skipNul=TRUE)
 textDataNews    <- readLines("dataset/en_US/en_US.news.txt", encoding = "UTF-8", skipNul=TRUE)
 
-#sample half
+# sample half
 sampleSize      <- min(c(length(textDataTwitter),length(textDataNews),length(textDataBlogs)))
 
 sampleTwitter   <- textDataTwitter[sample(1:length(textDataTwitter),sampleSize)]
